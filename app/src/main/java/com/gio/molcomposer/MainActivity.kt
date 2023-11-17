@@ -4,11 +4,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -47,17 +48,18 @@ class MainActivity : ComponentActivity() {
 fun Preview() {
     ModernComposeTheme {
         // A surface container using the 'background' color from the theme
-        Surface(color = MaterialTheme.colorScheme.background) {
-            Column(
-                modifier = Modifier
-                    .background(color = Color.Blue)
-                    .padding(16.dp)
-                    .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.SpaceBetween
+        Box(
+            modifier = Modifier
+                .background(color = Color.Green)
+                .fillMaxWidth()
+                .height(200.dp)
+        ) {
+            Text("Hello")
+            Box(
+                modifier = Modifier.fillMaxSize().padding(16.dp),
+                contentAlignment = Alignment.BottomEnd
             ) {
-                Text(text = "Hello")
-                Text(text = "Gio")
+                Text("Gio")
             }
         }
     }
