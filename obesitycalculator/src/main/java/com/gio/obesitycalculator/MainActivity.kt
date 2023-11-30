@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
 
 package com.gio.obesitycalculator
 
@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -15,8 +16,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -32,9 +36,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.gio.obesitycalculator.ui.theme.ModernComposeTheme
 
 class MainActivity : ComponentActivity() {
@@ -46,7 +53,15 @@ class MainActivity : ComponentActivity() {
                 Surface(
                     modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
                 ) {
-                    HomeScreen()
+                    val navController = rememberNavController()
+                    NavHost(navController = navController, startDestination = "home") {
+                        composable(route = "home") {
+                            HomeScreen(navController)
+                        }
+                        composable(route = "result") {
+                            ResultScreen(navController, bmi = 35.0)
+                        }
+                    }
                 }
             }
         }
@@ -54,7 +69,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(navController: NavController) {
     val (height, setHeight) = rememberSaveable {
         mutableStateOf("")
     }
@@ -85,7 +100,7 @@ fun HomeScreen() {
             )
             Spacer(modifier = Modifier.height(8.dp))
             Button(
-                onClick = { /*TODO*/ },
+                onClick = { navController.navigate(route = "result") },
                 modifier = Modifier.align(Alignment.End)
             ) {
                 Text(text = "결과")
@@ -95,9 +110,15 @@ fun HomeScreen() {
 }
 
 @Composable
-fun ResultScreen(bmi: Double) {
+fun ResultScreen(navController: NavController, bmi: Double) {
     Scaffold(topBar = {
-        TopAppBar(title = { Text(text = "비만도 계산기") })
+        TopAppBar(title = { Text(text = "비만도 계산기") }, navigationIcon = {
+            Icon(imageVector = Icons.Default.ArrowBack,
+                contentDescription = "뒤로 가기",
+                modifier = Modifier.clickable {
+                    navController.popBackStack()
+                })
+        })
     }) {
         Column(
             modifier = Modifier
@@ -119,18 +140,18 @@ fun ResultScreen(bmi: Double) {
 }
 
 
-@Preview(showBackground = true)
-@Composable
-fun FirstScreenPreview() {
-    ModernComposeTheme {
-        HomeScreen()
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun FirstScreenPreview() {
+//    ModernComposeTheme {
+//        HomeScreen(navController = NavController())
+//    }
+//}
 
-@Preview(showBackground = true)
-@Composable
-fun SecondScreenPreview() {
-    ModernComposeTheme {
-        ResultScreen(35.0)
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun SecondScreenPreview() {
+//    ModernComposeTheme {
+//        ResultScreen(35.0)
+//    }
+//}
