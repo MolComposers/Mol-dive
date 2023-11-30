@@ -38,6 +38,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -53,13 +54,19 @@ class MainActivity : ComponentActivity() {
                 Surface(
                     modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
                 ) {
+                    val viewModel: MainViewModel = viewModel()
+                    val bmi = viewModel.bmi.value
+
                     val navController = rememberNavController()
                     NavHost(navController = navController, startDestination = "home") {
                         composable(route = "home") {
-                            HomeScreen(navController)
+                            HomeScreen { height, weight ->
+                                viewModel.calculateBmi(height, weight)
+                                navController.navigate(route = "result")
+                            }
                         }
                         composable(route = "result") {
-                            ResultScreen(navController, bmi = 35.0)
+                            ResultScreen(navController, bmi)
                         }
                     }
                 }
@@ -69,7 +76,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreen(onResultBtnClick: (Double, Double) -> Unit) {
     val (height, setHeight) = rememberSaveable {
         mutableStateOf("")
     }
@@ -100,8 +107,11 @@ fun HomeScreen(navController: NavController) {
             )
             Spacer(modifier = Modifier.height(8.dp))
             Button(
-                onClick = { navController.navigate(route = "result") },
-                modifier = Modifier.align(Alignment.End)
+                onClick = {
+                    if (height.isNotBlank() && weight.isNotBlank()) onResultBtnClick(
+                        height.toDouble(), weight.toDouble()
+                    )
+                }, modifier = Modifier.align(Alignment.End)
             ) {
                 Text(text = "결과")
             }
@@ -111,6 +121,21 @@ fun HomeScreen(navController: NavController) {
 
 @Composable
 fun ResultScreen(navController: NavController, bmi: Double) {
+    val text = when {
+        bmi >= 35 -> "고도 비만"
+        bmi >= 30 -> "2단계 비만"
+        bmi >= 25 -> "1단계 비만"
+        bmi >= 23 -> "과체중"
+        bmi >= 18.5 -> "정상"
+        else -> "저체중"
+    }
+
+    val iconResId = when {
+        bmi >= 23 -> R.drawable.ic_face_very_dissatisfied
+        bmi >= 18.5 -> R.drawable.ic_face_satisfied
+        else -> R.drawable.ic_face_dissatisfied
+    }
+
     Scaffold(topBar = {
         TopAppBar(title = { Text(text = "비만도 계산기") }, navigationIcon = {
             Icon(imageVector = Icons.Default.ArrowBack,
@@ -127,10 +152,10 @@ fun ResultScreen(navController: NavController, bmi: Double) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "과체중", fontSize = 30.sp)
+            Text(text = text, fontSize = 30.sp)
             Spacer(modifier = Modifier.height(50.dp))
             Image(
-                painter = painterResource(id = R.drawable.ic_face_dissatisfied),
+                painter = painterResource(id = iconResId),
                 contentDescription = null,
                 modifier = Modifier.size(100.dp),
                 colorFilter = ColorFilter.tint(color = Color.Black)
