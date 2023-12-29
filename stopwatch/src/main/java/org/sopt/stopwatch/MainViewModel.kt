@@ -20,10 +20,10 @@ class MainViewModel : ViewModel() {
     private val _mill = mutableIntStateOf(0)
     val mill: State<Int> = _mill
 
-    private val _lapTimes = mutableStateOf(mutableListOf<String>())
-    val lapTimes: State<List<String>> = _lapTimes
+    private val _laps = mutableStateOf(listOf<String>())
+    val laps: State<List<String>> = _laps
 
-    private var lapCount = 1
+    private val lapCount = mutableIntStateOf(1)
 
     fun start() {
         timer = timer(period = 10) {
@@ -47,13 +47,14 @@ class MainViewModel : ViewModel() {
         time = 0
         _sec.intValue = 0
         _mill.intValue = 0
-        _lapTimes.value.clear()
+        _laps.value = listOf()
+        lapCount.intValue = 1
 
         _isRunning.value = false
     }
 
-    fun logLapTime() {
-        _lapTimes.value.add("$lapCount LAP: ${sec.value}.${mill.value}")
-        lapCount++
+    fun logLap() {
+        _laps.value = _laps.value.plus("${lapCount.intValue} LAP: ${sec.value}.${mill.value}")
+        lapCount.intValue++
     }
 }
