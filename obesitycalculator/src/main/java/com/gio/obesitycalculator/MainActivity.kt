@@ -101,7 +101,9 @@ fun HomeScreen(onResultBtnClick: (Double, Double) -> Unit) {
             OutlinedTextField(
                 value = weight,
                 onValueChange = setWeight,
-                label = { Text(text = "몸무게") },
+                label = {
+                    Text(text = "몸무게")
+                },
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
@@ -140,9 +142,11 @@ fun ResultScreen(navController: NavController, bmi: Double) {
         TopAppBar(title = { Text(text = "비만도 계산기") }, navigationIcon = {
             Icon(imageVector = Icons.Default.ArrowBack,
                 contentDescription = "뒤로 가기",
-                modifier = Modifier.clickable {
-                    navController.popBackStack()
-                })
+                modifier = Modifier
+                    .clickable {
+                        navController.popBackStack()
+                    }
+                    .padding(start = 20.dp, end = 20.dp))
         })
     }) {
         Column(
@@ -158,12 +162,11 @@ fun ResultScreen(navController: NavController, bmi: Double) {
                 painter = painterResource(id = iconResId),
                 contentDescription = null,
                 modifier = Modifier.size(100.dp),
-                colorFilter = ColorFilter.tint(color = Color.Black)
+                colorFilter = ColorFilter.tint(color = Color.Black),
             )
         }
     }
 }
-
 
 //@Preview(showBackground = true)
 //@Composable
