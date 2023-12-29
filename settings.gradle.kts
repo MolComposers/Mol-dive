@@ -16,3 +16,4 @@ dependencyResolutionManagement {
 rootProject.name = "ModernCompose"
 include(":app")
 include(":obesitycalculator")
+include(":stopwatch")
