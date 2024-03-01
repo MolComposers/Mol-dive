@@ -5,6 +5,12 @@
       <entry key="obesitycalculator">
         <State />
       </entry>
+      <entry key="practice">
+        <State />
+      </entry>
+      <entry key="stopwatch">
+        <State />
+      </entry>
     </value>
   </component>
 </project>
